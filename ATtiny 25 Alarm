@@ -59,7 +59,6 @@ int x = 0;                              //Countdown loop variable
      x = x + 1;                         //Repeat loop until while condition is no longer met
 }
 }
-
     digitalWrite(0, 0);                 //Boot LED off
     delay(50);
     
