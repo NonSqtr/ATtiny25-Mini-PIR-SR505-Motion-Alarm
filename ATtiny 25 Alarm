@@ -48,7 +48,7 @@ triggered while calibrating.
 
 int x = 0;                              //Countdown loop variable
 {
-   while (x <= 10)                      //10 Step, 1.5 second interval countdown. Loops within setup function only run once.
+   while (x <= 10)                      //10 Step, 1.5 second interval countdown.
 {    TinyTone(Note_C, 2, 50);           //Short beep
      delay(1500);
      x = x + 1;                         //Repeat loop until while condition is no longer met
@@ -57,7 +57,7 @@ int x = 0;                              //Countdown loop variable
     TinyTone(Note_C, 2, 750);           //Long beep indicates that unit is alarmed
     delay(2000);
 
-    digitalWrite(2, 0);                 //In case PIR pulls pin 2 permanently high because of retriggering error during calibration
+    digitalWrite(2, 0);                 //In case PIR pulls pin 2 permanently high because of retrigger error during calibration
 }
 
 void loop()
