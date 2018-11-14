@@ -1,10 +1,13 @@
 /*
 This code runs a portable PIR-activated proximity alarm on an ATtiny25 chip with LED and buzzer output.
+It includes a "boot" sequence to allow for the PIR sensor to adjust to its environment and also serves
+as an audible 15 second countdown for the user to move out of the field of detection.
 
-Program storage:        1368 bytes out of 2KB
-Variables RAM usage:    13 bytes out of 128B
+Program storage:        1258 bytes out of 2KB
+Variables RAM usage:    11 bytes out of 128B
 
-Based on the above-stated chip capacity, you can appreciate my need for the most minimalist code.
+Based on the above-stated chip capcity, you can appreciate my need for the most minimalist code.
+LTO is enabled to good effect.
 
 I have avoided declaring pin functions with string names and rather stuck with integers where possible.
 This seems to free up program space and would make sense?
@@ -19,11 +22,13 @@ const int Note_C  = 239;
 
 void TinyTone(unsigned char divisor, unsigned char octave, unsigned long duration)
 {
-TCCR1 = 0x90 | (8-octave);              //8MHz pre-scaler
+TCCR1 = 0x90 | (8-octave);              //xMHz pre-scaler
 OCR1C = divisor-1;                      //Set the OCR
 delay(duration);
 TCCR1 = 0x90;                           //Stop the counter
 }
+
+#define adc_disable() (ADCSRA &= ~(1<<ADEN)) //Saves power by disabling analogue to digital converter
 
 int i = 0;                              //Main loop variable
 int state = 0;                          //Main loop variable
@@ -35,6 +40,8 @@ pinMode(1, OUTPUT);                     //Buzzer on pin 1
 pinMode(2, INPUT);                      //PIR on pin 2
 digitalWrite (2, 0);                    //Pulls down PIR pin to logical 0
 
+adc_disable();                          //Disable analogue to digital converter
+
 /*
 On power up, the following sequence creates an ample interrupt for the PIR sensor to calibrate and adjust to its
 environment, also preventing triggering and false positives on startup which can lead to the PIR pin immediately getting
@@ -43,26 +50,28 @@ triggered while calibrating.
 */
     digitalWrite(0, 1);                 //Boot LED on
     delay(1000);
-    digitalWrite(0, 0);                 //Boot LED off
-    delay(1000);
 
 int x = 0;                              //Countdown loop variable
 {
-   while (x <= 10)                      //10 Step, 1.5 second interval countdown.
-{    TinyTone(Note_C, 2, 50);           //Short beep
+   while (x <= 10)                      //10 Step, 1.5 second interval countdown. Loops within setup function only run once.
+{    TinyTone(Note_C, 5, 50);           //Short beep
      delay(1500);
      x = x + 1;                         //Repeat loop until while condition is no longer met
 }
 }
-    TinyTone(Note_C, 2, 750);           //Long beep indicates that unit is alarmed
-    delay(2000);
 
-    digitalWrite(2, 0);                 //In case PIR pulls pin 2 permanently high because of retrigger error during calibration
+    digitalWrite(0, 0);                 //Boot LED off
+    delay(50);
+    
+    TinyTone(Note_C, 5, 750);           //Long beep indicates that unit is alarmed
+    delay(2000);
+   
+    digitalWrite(2, 0);                 //In case PIR pulls pin 2 permanently high because of retriggering error during calibration
 }
 
 void loop()
 {
-    state = digitalRead(2);             //State variable
+    state = digitalRead(2);             //Read PIR state
     if (state == 1)                     //Conditional to run loop on PIR state 1
 {
     for(i = 0; i < 255; i = i + 1)      //This function is used to drive the alarm buzzer and LED                                  
