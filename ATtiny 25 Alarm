@@ -62,7 +62,7 @@ int x = 0;                              //Countdown loop variable
 
 void loop()
 {
-    state = digitalRead(2);             //Read PIR state
+    state = digitalRead(2);             //State variable
     if (state == 1)                     //Conditional to run loop on PIR state 1
 {
     for(i = 0; i < 255; i = i + 1)      //This function is used to drive the alarm buzzer and LED                                  
