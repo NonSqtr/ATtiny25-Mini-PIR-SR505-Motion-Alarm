@@ -1,13 +1,10 @@
 /*
 This code runs a portable PIR-activated proximity alarm on an ATtiny25 chip with LED and buzzer output.
-It includes a "boot" sequence to allow for the PIR sensor to adjust to its environment and also serves
-as an audible 15 second countdown for the user to move out of the field of detection.
 
 Program storage:        1368 bytes out of 2KB
 Variables RAM usage:    13 bytes out of 128B
 
-Based on the above-stated chip capcity, you can appreciate my need for the most minimalist code.
-Down here we don't float (cough)
+Based on the above-stated chip capacity, you can appreciate my need for the most minimalist code.
 
 I have avoided declaring pin functions with string names and rather stuck with integers where possible.
 This seems to free up program space and would make sense?
