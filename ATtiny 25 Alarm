@@ -38,7 +38,7 @@ void setup()
 pinMode(0, OUTPUT);                     //LED on pin 0
 pinMode(1, OUTPUT);                     //Buzzer on pin 1
 pinMode(2, INPUT);                      //PIR on pin 2
-digitalWrite (2, 0);                    //Pulls down PIR pin to logical 0
+digitalWrite (2, 0);                    //Pulls down PIR pin to 0
 
 adc_disable();                          //Disable analogue to digital converter
 
@@ -53,7 +53,7 @@ triggered while calibrating.
 
 int x = 0;                              //Countdown loop variable
 {
-   while (x <= 10)                      //10 Step, 1.5 second interval countdown. Loops within setup function only run once.
+   while (x <= 10)                      //Countdown timer
 {    TinyTone(Note_C, 5, 50);           //Short beep
      delay(1500);
      x = x + 1;                         //Repeat loop until while condition is no longer met
@@ -66,6 +66,7 @@ int x = 0;                              //Countdown loop variable
     delay(2000);
    
     digitalWrite(2, 0);                 //In case PIR pulls pin 2 permanently high because of retriggering error during calibration
+    delay(5000);                        //Additional delay on PIR reading as these sensors are very sensitive
 }
 
 void loop()
@@ -77,7 +78,7 @@ void loop()
 {                                       
     analogWrite(0, i);                  //The analogWrite function allows for PWM manipulation to generate and modify tones beyond
     analogWrite(1, i);                  //the standard "microwave oven" beep
-    delay(2);          
+    delay(1);          
 }
 }
     else                                //Conditional to not run or end loop when PIR state = 0
